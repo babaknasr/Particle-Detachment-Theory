@@ -43,4 +43,35 @@ switch model
         n_b = parameters.n_b;
         Nbump = parameters.Nbump;
         Fpo = (Dp/(n_u*n_b*sqrt(Nbump)))*.00145*(1.5*pi^2*Wa^3*exp(-.6/Deltac^2))^3;
+        
+    case 'Rumpf-Rabinovich'
+        % Rump-Rabinovich adhesion force (Modified Rumpf model)
+        % Referece: Rabinovich et al. (2000) Eq. (7) [first paper]
+        % here H0=z0, R=Dp/2, sigma: rms
+        R = Dp/2;
+        H0 = parameters.z0;
+        sigma = parameters.sigma;
+        if isnan(parameters.A)
+            A = Wa * (12*pi*H0^2);
+        else
+            A = parameters.A;
+        end %if
+        Fpo = (A*R/(6*H0^2)) .* ((1+R./(1.48.*sigma)).^(-1) + (1+1.48.*sigma/H0).^(-2));
+        return
+        
+    case 'Rabinovich'
+        R = Dp/2;
+        H0 = parameters.z0;
+        sigma = parameters.sigma;
+        if isnan(parameters.A)
+            A = Wa * (12*pi*H0^2);
+        else
+            A = parameters.A;
+        end %if
+        lambda = parameters.lambda;
+        
+        k1 = 1.817;
+        Fpo = (A*R/(6*H0^2)) .* ( (1+32*k1*R.*sigma./lambda.^2).^(-1) + (1+k1*sigma/H0).^(-2) );
+        return
+        
 end %switch
